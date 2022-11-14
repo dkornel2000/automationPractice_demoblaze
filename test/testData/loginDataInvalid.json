@@ -4,11 +4,15 @@
         "password":"123"
     },
     {
-        "username":"invalidlogin",
+        "username":"testU1",
         "password":""
     },
     {
-        "username":"invalidlogin",
+        "username":"testU1",
+        "password":"321"
+    },
+    {
+        "username":"testU11",
         "password":"123"
     }
 ]

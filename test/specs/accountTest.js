@@ -9,19 +9,19 @@ const fs = require('fs')
 let loginDataValid = JSON.parse(fs.readFileSync('test/testData/loginDataValid.json'))
 let loginDataInvalid = JSON.parse(fs.readFileSync('test/testData/loginDataInvalid.json'))
 
-describe("Registration", async () => {
-    // Added a totally useless counter to the name of test case for fun.
+describe("Registration and login functionality", async () => {
+    //Registration automation should only be used, if the data is wiped after each test session.
     loginDataValid.forEach(({ username, password }) => {
-        it('Registration with valid credentials', async () => {
+        xit('Registration with valid credentials', async () => {
             await browser.setWindowSize(1280, 720);
-            browser.deleteCookies();
             await landingPage.openWebsite;
             await landingPage.ExpectToBeOpened;
             await registration.signUpButton.click();
             await registration.signUpDialog.waitForDisplayed(),
-                await registration.Register(username, password)
+            await registration.Register(username, password)
             await browser.waitUntil(await EC.alertIsPresent(), { timeout: 2000, timeoutMsg: "Alert was not displayed" })
-            await browser.getAlertText()
+            let registrationAlert = await browser.getAlertText()
+            expectChai(registrationAlert).to.equal("Sign up successful.")
             await browser.acceptAlert()
         })
     })
