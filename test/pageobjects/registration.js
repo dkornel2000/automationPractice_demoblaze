@@ -1,4 +1,4 @@
-class registrationWindow
+class registration
 {
 get signUpButton()
     {
@@ -27,4 +27,4 @@ async Register(username,password)
         await this.register.click()
     }   
 }
-module.exports = new registrationWindow()
+module.exports = new registration()

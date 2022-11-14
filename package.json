@@ -15,6 +15,7 @@
     "@wdio/mocha-framework": "^7.25.4",
     "@wdio/selenium-standalone-service": "^7.25.4",
     "@wdio/spec-reporter": "^7.25.4",
-    "chai": "^4.3.7"
+    "chai": "^4.3.7",
+    "wdio-wait-for": "^3.0.0"
   }
 }

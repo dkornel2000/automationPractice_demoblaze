@@ -1,42 +1,56 @@
 const landingPage = require('../pageobjects/landingPage.js');
-const registrationWindow = require('../pageobjects/registrationWindow.js');
-const loginWindow = require('../pageobjects/loginWindow.js');
-const expectChai = require('chai').expect
-const fs = require('fs')
-let loginData = JSON.parse(fs.readFileSync('test/testData/loginData.json'))
+const registration = require('../pageobjects/registration.js');
+const login = require('../pageobjects/login.js');
 
-describe ("Registration" , async()=> 
-    {  
-        // Added a totally useless counter to the name of test case for fun.
-        loginData.forEach(({username,password}) => {
-        let i = 0  
-        i++;  
-        xit (`Registration with test data [${i}]`, async()=>
-        {
+const expectChai = require('chai').expect
+const EC = require('wdio-wait-for');
+
+const fs = require('fs')
+let loginDataValid = JSON.parse(fs.readFileSync('test/testData/loginDataValid.json'))
+let loginDataInvalid = JSON.parse(fs.readFileSync('test/testData/loginDataInvalid.json'))
+
+describe("Registration", async () => {
+    // Added a totally useless counter to the name of test case for fun.
+    loginDataValid.forEach(({ username, password }) => {
+        it('Registration with valid credentials', async () => {
             await browser.setWindowSize(1280, 720);
             browser.deleteCookies();
             await landingPage.openWebsite;
             await landingPage.ExpectToBeOpened;
-            await registrationWindow.signUpButton.click();
-            await registrationWindow.signUpDialog.waitForDisplayed(),
-            await registrationWindow.Register(username, password)
-
+            await registration.signUpButton.click();
+            await registration.signUpDialog.waitForDisplayed(),
+                await registration.Register(username, password)
+            await browser.waitUntil(await EC.alertIsPresent(), { timeout: 2000, timeoutMsg: "Alert was not displayed" })
+            await browser.getAlertText()
+            await browser.acceptAlert()
         })
-        })
-        loginData.forEach(({username,password}) => {
-        it ('Login with valid credentials', async()=>
-        {
+    })
+    loginDataValid.forEach(({ username, password }) => {
+        it('Login with valid credentials', async () => {
             await browser.setWindowSize(1280, 720);
             await landingPage.openWebsite;
             await landingPage.ExpectToBeOpened;
-            await loginWindow.loginButton.click();
-            await loginWindow.loginDialog.waitForDisplayed();
-            await loginWindow.Login(username, password);
-            await loginWindow.loginDialog.waitForDisplayed({reverse:true});
-            // await loginWindow.logout.waitForDisplayed()
-            // await loginWindow.logout.click()
-            // No need to logout because no cookies, session is not stored
-        })
+            await login.loginButton.click();
+            await login.loginDialog.waitForDisplayed();
+            await login.Login(username, password);
+            await login.loginDialog.waitForDisplayed({ reverse: true });
+            await expect(login.loginWelcome).toBeClickable();
+            await login.LoginValidation();
         })
     })
+    loginDataInvalid.forEach(({ username, password }) => {
+        it('Login with invalid credentials', async () => {
+            await browser.setWindowSize(1280, 720);
+            await landingPage.openWebsite;
+            await landingPage.ExpectToBeOpened;
+            await login.loginButton.click();
+            await login.loginDialog.waitForDisplayed();
+            await login.Login(username, password);
+            await browser.waitUntil(await EC.alertIsPresent(), { timeout: 2000, timeoutMsg: "Alert was not displayed" })
+            await browser.acceptAlert()
+            await login.loginDialogClose.click()
+            await login.loginDialog.waitForDisplayed({ reverse: true });
+        })
+    })
+})
 
